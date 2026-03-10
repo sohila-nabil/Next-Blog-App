@@ -1,5 +1,5 @@
-import { assets } from "@/Assets/assets";
-import Sidebar from "@/components/Admin/Sidebar";
+import { assets } from "../../../Assets/assets";
+import Sidebar from "../../../components/Admin/Sidebar";
 import Image from "next/image";
 import React from "react";
 
