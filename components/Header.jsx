@@ -6,7 +6,6 @@ import Navbar from "./Navbar";
 const Header = () => {
   return (
     <div className="py-5 px-5 md:px-12  lg:px-28">
-     <Navbar/>
 
       <div className="text-center mb-8 mt-10">
         <h1 className="text-3xl sm:text-5xl font-medium">Latest Blogs</h1>

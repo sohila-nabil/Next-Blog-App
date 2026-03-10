@@ -6,12 +6,14 @@ import Link from "next/link";
 import Search from "./Search";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useTheme } from "next-themes";
+import { SignInButton, UserButton, Show } from "@clerk/nextjs";
+// import { dark, light } from "@clerk/ui/themes";
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <>
+    <div className="py-5 mb-8 px-5 md:px-12  lg:px-28 border-b border-slate-300">
       <div className="flex justify-between items-center">
         <Link href={"/"}>
           <Image
@@ -31,17 +33,21 @@ const Navbar = () => {
             {theme === "dark" ? <FaSun /> : <FaMoon />}
           </button>
           <div className="relative">
-            {/* <Image
-              className="h-12 w-12 rounded-full"
-              src={assets.profile_icon}
-              alt="profile_icon"
-              width={40}
-            /> */}
-            <button className="border border-slate-400 cursor-pointer py-1 px-2  rounded-[5px]">Sign In</button>
+            <Show when="signed-in">
+              <UserButton />
+            </Show>
+            <Show when="signed-out">
+              <Link
+                href={"/sign-in"}
+                className="border border-slate-400 cursor-pointer py-1 px-2  rounded-[5px]"
+              >
+                Sign In
+              </Link>
+            </Show>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
