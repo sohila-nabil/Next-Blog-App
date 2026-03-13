@@ -1,7 +1,7 @@
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { NextRequest } from "next/server";
 import { createOrUpdateUser, deleteUser } from "../../../../lib/services/user";
-import { clerkClient } from "@clerk/nextjs/dist/types/server";
+import { clerkClient } from "@clerk/express";
 
 export async function POST(req) {
   try {
