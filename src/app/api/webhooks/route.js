@@ -1,11 +1,14 @@
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
-import { NextRequest } from "next/server";
-import { createOrUpdateUser, deleteUser } from "../../../../lib/services/user";
 import { clerkClient } from "@clerk/nextjs/server";
+import { createOrUpdateUser, deleteUser } from "../../../../lib/services/user";
+
+export const runtime = "nodejs";
 
 export async function POST(req) {
   try {
     const evt = await verifyWebhook(req);
+
+    console.log("Webhook event:", evt.type);
 
     if (evt.type === "user.created" || evt.type === "user.updated") {
       const {
@@ -16,39 +19,33 @@ export async function POST(req) {
         email_addresses,
         username,
       } = evt.data;
-      try {
-        const user = await createOrUpdateUser(
-          id,
-          first_name,
-          last_name,
-          image_url,
-          email_addresses,
-          username,
-        );
-        if (user && evt.type === "user.created") {
-          try {
-            await clerkClient.users.updateUserMetadata(id, {
-              publicMetadata: {
-                userMongoId: user._id,
-                isAdmin: user.isAdmin,
-              },
-            });
-          } catch (error) {
-            console.log("updateUserMetadata", error);
-          }
-        }
-      } catch (error) {
-        console.log("Webhook with create user error", error);
+
+      const user = await createOrUpdateUser(
+        id,
+        first_name,
+        last_name,
+        image_url,
+        email_addresses,
+        username,
+      );
+
+      if (user && evt.type === "user.created") {
+        const client = await clerkClient();
+
+        await client.users.updateUserMetadata(id, {
+          publicMetadata: {
+            userMongoId: user._id,
+            isAdmin: user.isAdmin,
+          },
+        });
+
+        console.log("Metadata updated");
       }
     }
 
     if (evt.type === "user.deleted") {
       const { id } = evt.data;
-      try {
-        await deleteUser(id);
-      } catch (error) {
-        console.log("delete user from route webhook", error);
-      }
+      await deleteUser(id);
     }
 
     return new Response("Webhook received", { status: 200 });
