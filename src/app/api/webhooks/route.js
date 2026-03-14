@@ -29,16 +29,20 @@ export async function POST(req) {
         email_addresses,
         username,
       );
+      console.log(user);
 
       if (user && evt.type === "user.created") {
         const { userId } = await auth();
+        console.log(userId);
+
         const client = await clerkClient();
-        await client.users.updateUserMetadata(userId, {
+        const updated = await client.users.updateUserMetadata(userId, {
           publicMetadata: {
             userMongoId: user._id,
             isAdmin: user.isAdmin,
           },
         });
+        console.log("Updated user:", updated.publicMetadata);
 
         console.log("Metadata updated");
       }
