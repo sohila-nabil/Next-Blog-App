@@ -20,7 +20,15 @@ export async function POST(req) {
         email_addresses,
         username,
       } = evt.data;
-
+      console.log(
+        id,
+        first_name,
+        last_name,
+        image_url,
+        email_addresses,
+        username,
+      );
+      
       const user = await createOrUpdateUser(
         id,
         first_name,
@@ -33,10 +41,10 @@ export async function POST(req) {
 
       if (user && evt.type === "user.created") {
         const { userId } = await auth();
-        console.log(userId);
+        console.log("userId", userId);
 
         const client = await clerkClient();
-        const updated = await client.users.updateUserMetadata(userId, {
+        const updated = await client.users.updateUserMetadata(userId || id, {
           publicMetadata: {
             userMongoId: user._id,
             isAdmin: user.isAdmin,
