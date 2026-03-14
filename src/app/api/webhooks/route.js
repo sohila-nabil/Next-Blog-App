@@ -1,6 +1,5 @@
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
-import { auth, clerkClient } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { clerkClient } from "@clerk/nextjs/server";
 import { createOrUpdateUser, deleteUser } from "../../../../lib/services/user";
 
 export const runtime = "nodejs";
@@ -20,39 +19,31 @@ export async function POST(req) {
         email_addresses,
         username,
       } = evt.data;
-      console.log(
-        id,
-        first_name,
-        last_name,
-        image_url,
-        email_addresses,
-        username,
-      );
-      
+
+      const email = email_addresses[0]?.email_address;
+
       const user = await createOrUpdateUser(
         id,
         first_name,
         last_name,
         image_url,
-        email_addresses,
+        email,
         username,
       );
-      console.log(user);
+
+      console.log("Mongo User:", user);
 
       if (user && evt.type === "user.created") {
-        const { userId } = await auth();
-        console.log("userId", userId);
+        const client = clerkClient;
 
-        const client = await clerkClient();
-        const updated = await client.users.updateUserMetadata(userId || id, {
+        const updated = await client.users.updateUserMetadata(id, {
           publicMetadata: {
-            userMongoId: user._id,
+            userMongoId: user._id.toString(),
             isAdmin: user.isAdmin,
           },
         });
-        console.log("Updated user:", updated.publicMetadata);
 
-        console.log("Metadata updated");
+        console.log("Updated metadata:", updated.publicMetadata);
       }
     }
 
