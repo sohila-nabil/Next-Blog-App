@@ -34,7 +34,7 @@ export async function POST(req) {
       console.log("Mongo User:", user);
 
       if (user && evt.type === "user.created") {
-        const client = clerkClient;
+        const client = await clerkClient();
 
         const updated = await client.users.updateUserMetadata(id, {
           publicMetadata: {
@@ -42,6 +42,7 @@ export async function POST(req) {
             isAdmin: user.isAdmin,
           },
         });
+
 
         console.log("Updated metadata:", updated.publicMetadata);
       }
