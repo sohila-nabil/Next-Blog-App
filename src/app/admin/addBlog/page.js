@@ -118,6 +118,7 @@ export default function AddBlog() {
             />
           </div>
 
+
           <ImageUpload
             onImageChange={handleImageChange}
             image={image}
