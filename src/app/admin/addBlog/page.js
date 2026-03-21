@@ -15,6 +15,7 @@ const Delta = Quill.import("delta");
 export default function AddBlog() {
   const { isSignedIn, user, isLoaded } = useUser();
   const [image, setImage] = useState();
+  const [preview, setPreview] = useState();
   const [content, setContent] = useState("");
   const quillRef = useRef();
 
@@ -35,9 +36,12 @@ export default function AddBlog() {
     const html = quillRef.current.root.innerHTML;
     setContent(html);
   };
-  const handleImageChange = useCallback((file) => {
-    const preview = URL.createObjectURL(file);
-    setImage(file);
+  const handleImageChange = useCallback((e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+      setImage(e.target.files[0]);
+    }
   }, []);
 
   const handleSubmit = async (e) => {
@@ -49,10 +53,7 @@ export default function AddBlog() {
     formData.append("image", image);
 
     try {
-      const res = await axios.post(
-        `/api/blog/create`,
-        formData,
-      );
+      const res = await axios.post(`/api/blog/create`, formData);
       console.log(res);
     } catch (error) {
       console.log("error creating blog font", error);
@@ -60,7 +61,7 @@ export default function AddBlog() {
   };
 
   if (!isLoaded) return null;
-  
+
   const role = user?.publicMetadata?.role;
 
   if (!isSignedIn || (role !== "admin" && role !== "author")) {
@@ -121,6 +122,7 @@ export default function AddBlog() {
             onImageChange={handleImageChange}
             image={image}
             setImage={setImage}
+            preview={preview}
           />
 
           {/* Form Actions */}
