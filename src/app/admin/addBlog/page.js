@@ -50,7 +50,7 @@ export default function AddBlog() {
 
     try {
       const res = await axios.post(
-        `${process.env.BACKEND_URL_PRODUCTION}/api/blog/create`,
+        `/api/blog/create`,
         formData,
       );
       console.log(res);
