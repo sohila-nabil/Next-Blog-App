@@ -25,11 +25,6 @@ const SidebarCom = () => {
     { href: "/admin/addBlog", icon: HiViewBoards, label: "Add Blog" },
     { href: "/admin/blogList", icon: HiInbox, label: "Blog List" },
     { href: "/admin/users", icon: HiUser, label: "Users" },
-    // {
-    //   href: "/admin/subscriptions",
-    //   icon: HiShoppingBag,
-    //   label: "Subscriptions",
-    // },
     {
       href: "#",
       icon: HiArrowSmRight,
