@@ -8,7 +8,8 @@ export async function POST(req) {
     await dbConnection();
 
     const user = await currentUser();
-
+    console.log(user);
+    
     if (!user) {
       return new Response("Unauthorized", { status: 401 });
     }

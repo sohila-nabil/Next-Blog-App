@@ -50,7 +50,7 @@ export default function AddBlog() {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/blog/create",
+        `${process.env.BACKEND_URL_PRODUCTION}/api/blog/create`,
         formData,
       );
       console.log(res);
@@ -60,7 +60,6 @@ export default function AddBlog() {
   };
 
   if (!isLoaded) return null;
-  console.log(user);
   
   const role = user?.publicMetadata?.role;
 
