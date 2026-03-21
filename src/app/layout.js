@@ -3,8 +3,8 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import Theme from "../../components/Theme";
 import { ClerkProvider } from "@clerk/nextjs";
-import Navbar from "../../components/Navbar";
-
+// import Navbar from "../../components/Navbar";
+import { ThemeModeScript } from "flowbite-react";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -20,6 +20,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeModeScript />
+      </head>
       <body
         className={`${outfit.variable} antialiased 
     bg-white text-gray-700 
@@ -28,7 +31,7 @@ export default function RootLayout({ children }) {
         <ClerkProvider>
           <ThemeProvider attribute="class">
             <Theme>
-              <Navbar />
+              {/* <Navbar /> */}
               {children}
             </Theme>
           </ThemeProvider>

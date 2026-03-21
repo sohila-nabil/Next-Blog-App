@@ -1,20 +1,16 @@
 import { assets } from "../../../Assets/assets";
-import Sidebar from "../../../components/Admin/Sidebar";
+import SidebarCom from "../../../components/Admin/Sidebar";
 import Image from "next/image";
 import React from "react";
 
 const layout = ({ children }) => {
   return (
-    <>
-      <div className="flex">
-        <Sidebar />
-        <div className="flex flex-col w-full">
-          <div className="flex items-center justify-between w-full py-3 max-h-15 px-12 border-b border-black">
-            <Image src={assets.profile_icon} width={40} alt="profile_icon" />
-          </div>
-        </div>
-      </div>
-    </>
+    <div className="flex">
+      <SidebarCom />
+      <main className="flex-1 ml-20 sm:ml-64 p-6 bg-gray-50 min-h-screen w-[180px]">
+        {children}
+      </main>
+    </div>
   );
 };
 

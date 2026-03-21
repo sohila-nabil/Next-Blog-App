@@ -40,9 +40,9 @@ export async function POST(req) {
           publicMetadata: {
             userMongoId: user._id.toString(),
             isAdmin: user.isAdmin,
+            role: user.role,
           },
         });
-
 
         console.log("Updated metadata:", updated.publicMetadata);
       }

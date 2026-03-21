@@ -1,0 +1,587 @@
+"use client";
+import Image from "next/image";
+import { useState } from "react";
+import {
+  HiOutlinePencil,
+  HiOutlineTrash,
+  HiOutlineEye,
+  HiOutlineSearch,
+  HiOutlineFilter,
+  HiOutlineRefresh,
+  HiDotsVertical,
+  HiOutlineChevronLeft,
+  HiOutlineChevronRight,
+  HiOutlineDocumentDownload,
+  HiOutlinePrinter,
+} from "react-icons/hi";
+
+export default function BlogList() {
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Fake blog data
+  const blogs = [
+    {
+      id: "BLG001",
+      image:
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=60&h=40&fit=crop",
+      title: "Getting Started with Next.js 14",
+      category: "Technology",
+      author: "John Doe",
+      authorAvatar: "https://i.pravatar.cc/32?u=1",
+      status: "Published",
+      date: "2024-01-15",
+      views: "2.5k",
+      comments: 24,
+      excerpt:
+        "Learn how to build modern web applications with Next.js 14 and its new features...",
+    },
+    {
+      id: "BLG002",
+      image:
+        "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=60&h=40&fit=crop",
+      title: "Understanding React Server Components",
+      category: "Development",
+      author: "Jane Smith",
+      authorAvatar: "https://i.pravatar.cc/32?u=2",
+      status: "Draft",
+      date: "2024-02-01",
+      views: "0",
+      comments: 0,
+      excerpt:
+        "Deep dive into React Server Components and how they revolutionize web development...",
+    },
+    {
+      id: "BLG003",
+      image:
+        "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=60&h=40&fit=crop",
+      title: "Ultimate Guide to Tailwind CSS",
+      category: "CSS",
+      author: "Mike Johnson",
+      authorAvatar: "https://i.pravatar.cc/32?u=3",
+      status: "Published",
+      date: "2024-01-28",
+      views: "1.8k",
+      comments: 12,
+      excerpt:
+        "Master Tailwind CSS with this comprehensive guide covering everything from basics to advanced...",
+    },
+    {
+      id: "BLG004",
+      image:
+        "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=60&h=40&fit=crop",
+      title: "10 Tips for Better Code Quality",
+      category: "Programming",
+      author: "Sarah Wilson",
+      authorAvatar: "https://i.pravatar.cc/32?u=4",
+      status: "Scheduled",
+      date: "2024-03-10",
+      views: "0",
+      comments: 0,
+      excerpt:
+        "Improve your code quality with these 10 essential tips and best practices...",
+    },
+    {
+      id: "BLG005",
+      image:
+        "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=60&h=40&fit=crop",
+      title: "Modern JavaScript Features You Should Know",
+      category: "JavaScript",
+      author: "Alex Chen",
+      authorAvatar: "https://i.pravatar.cc/32?u=5",
+      status: "Published",
+      date: "2024-02-05",
+      views: "3.2k",
+      comments: 31,
+      excerpt:
+        "Explore the latest JavaScript features that will make your code more efficient and readable...",
+    },
+    {
+      id: "BLG006",
+      image:
+        "https://images.unsplash.com/photo-1522252234503-e356532cafd5?w=60&h=40&fit=crop",
+      title: "Introduction to TypeScript",
+      category: "TypeScript",
+      author: "Emily Brown",
+      authorAvatar: "https://i.pravatar.cc/32?u=6",
+      status: "Draft",
+      date: "2024-02-12",
+      views: "0",
+      comments: 0,
+      excerpt:
+        "Get started with TypeScript and learn how it can improve your development experience...",
+    },
+  ];
+
+  // Status colors mapping
+  const statusColors = {
+    Published: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20",
+    Draft: "bg-amber-50 text-amber-700 ring-1 ring-amber-600/20",
+    Scheduled: "bg-blue-50 text-blue-700 ring-1 ring-blue-600/20",
+    Archived: "bg-gray-50 text-gray-700 ring-1 ring-gray-600/20",
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedRows(blogs.map((blog) => blog.id));
+    } else {
+      setSelectedRows([]);
+    }
+  };
+
+  const handleSelectRow = (id) => {
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id],
+    );
+  };
+
+  const handleEdit = (blog) => {
+    console.log("Edit:", blog);
+  };
+
+  const handleDelete = (blog) => {
+    console.log("Delete:", blog);
+  };
+
+  const handleView = (blog) => {
+    console.log("View:", blog);
+  };
+
+  const filteredBlogs = blogs.filter(
+    (blog) =>
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.category.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  return (
+    <div className="p-8 bg-linear-to-br from-gray-50 to-gray-100 min-h-screen w-5xl">
+      {/* Header Section */}
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold bg-linear-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              Blog Posts
+            </h1>
+            <p className="text-gray-500 mt-1">
+              Manage your blog content and track performance
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-all flex items-center gap-2 shadow-sm hover:shadow">
+              <HiOutlinePrinter className="w-4 h-4" />
+              <span className="hidden sm:inline">Export</span>
+            </button>
+            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all flex items-center gap-2 shadow-md hover:shadow-lg">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              <span>New Post</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500">Total Blogs</p>
+                <p className="text-3xl font-bold text-gray-900">156</p>
+              </div>
+              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="mt-2 text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full inline-flex">
+              ↑ 12% from last month
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500">Published</p>
+                <p className="text-3xl font-bold text-gray-900">98</p>
+              </div>
+              <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-emerald-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="mt-2 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full inline-flex">
+              63% of total
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500">Drafts</p>
+                <p className="text-3xl font-bold text-gray-900">42</p>
+              </div>
+              <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-amber-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="mt-2 text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-full inline-flex">
+              Need review: 12
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500">Total Views</p>
+                <p className="text-3xl font-bold text-gray-900">45.2k</p>
+              </div>
+              <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="mt-2 text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-full inline-flex">
+              ↑ 8.2% this week
+            </div>
+          </div>
+        </div>
+
+        {/* Search and Filter Bar */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6">
+          <div className="flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex flex-1 gap-3">
+              <div className="relative flex-1 max-w-md">
+                <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search blogs by title, author, or category..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                />
+              </div>
+              <button className="px-4 py-2.5 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-all flex items-center gap-2">
+                <HiOutlineFilter className="w-4 h-4" />
+                <span className="hidden sm:inline">Filter</span>
+              </button>
+              <button className="px-4 py-2.5 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-all">
+                <HiOutlineRefresh className="w-4 h-4" />
+              </button>
+            </div>
+
+            {selectedRows.length > 0 && (
+              <div className="flex items-center gap-3 bg-blue-50 px-4 py-2 rounded-xl">
+                <span className="text-sm text-blue-700">
+                  {selectedRows.length} selected
+                </span>
+                <button className="text-red-600 hover:text-red-700 text-sm font-medium">
+                  Delete
+                </button>
+                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                  Bulk Edit
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              {/* Table Header */}
+              <thead className="bg-linear-to-r from-gray-50 to-gray-100/50">
+                <tr>
+                  <th className="p-5">
+                    <input
+                      type="checkbox"
+                      onChange={handleSelectAll}
+                      checked={
+                        selectedRows.length === blogs.length && blogs.length > 0
+                      }
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                  </th>
+                  <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Post
+                  </th>
+                  <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Category
+                  </th>
+                  <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Author
+                  </th>
+                  <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Stats
+                  </th>
+                  <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+
+              {/* Table Body */}
+              <tbody className="divide-y divide-gray-100">
+                {filteredBlogs.map((blog) => (
+                  <tr
+                    key={blog.id}
+                    className={`hover:bg-gray-50/80 transition-all group ${
+                      selectedRows.includes(blog.id) ? "bg-blue-50/50" : ""
+                    }`}
+                  >
+                    {/* Checkbox */}
+                    <td className="p-5">
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.includes(blog.id)}
+                        onChange={() => handleSelectRow(blog.id)}
+                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                    </td>
+
+                    {/* Post Info */}
+                    <td className="p-5">
+                      <div className="flex items-center gap-4">
+                        <div className="relative group/image">
+                          <div className="w-16 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden ring-1 ring-gray-200 group-hover/image:ring-2 group-hover/image:ring-blue-400 transition-all">
+                            <Image
+                              src={blog?.image}
+                              alt={"blog.title"}
+                              width={64}
+                              height={48}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <button className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white rounded-full opacity-0 group-hover/image:opacity-100 transition-all flex items-center justify-center">
+                            <HiOutlineEye className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+                            {blog.title}
+                          </h3>
+                          <p className="text-xs text-gray-500 mt-1 line-clamp-1 max-w-xs">
+                            {blog.excerpt}
+                          </p>
+                          <span className="text-xs text-gray-400 mt-1 block">
+                            ID: {blog.id}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Category */}
+                    <td className="p-5">
+                      <span className="px-3 py-1.5 text-xs font-medium bg-linear-to-br from-blue-50 to-indigo-50 text-blue-700 rounded-lg border border-blue-200/50">
+                        {blog.category}
+                      </span>
+                    </td>
+
+                    {/* Author */}
+                    <td className="p-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-linear-to-br from-gray-100 to-gray-200 overflow-hidden ring-2 ring-white">
+                          <Image
+                            src={blog.authorAvatar}
+                            alt={blog.author}
+                            width={32}
+                            height={32}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <span className="text-sm font-medium text-gray-700">
+                          {blog.author}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Status */}
+                    <td className="p-5">
+                      <span
+                        className={`px-3 py-1.5 text-xs font-medium rounded-lg ${statusColors[blog.status]}`}
+                      >
+                        {blog.status}
+                      </span>
+                    </td>
+
+                    {/* Stats */}
+                    <td className="p-5">
+                      <div className="flex items-center gap-4">
+                        <div className="text-center">
+                          <p className="text-sm font-semibold text-gray-900">
+                            {blog.views}
+                          </p>
+                          <p className="text-xs text-gray-500">views</p>
+                        </div>
+                        <div className="w-px h-8 bg-gray-200"></div>
+                        <div className="text-center">
+                          <p className="text-sm font-semibold text-gray-900">
+                            {blog.comments}
+                          </p>
+                          <p className="text-xs text-gray-500">comments</p>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Date */}
+                    <td className="p-5">
+                      <div className="text-sm text-gray-700">
+                        {new Date(blog.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        {new Date(blog.date).toLocaleDateString("en-US", {
+                          weekday: "short",
+                        })}
+                      </div>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="p-5">
+                      <div className="flex items-center gap-2 opacity-70 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => handleView(blog)}
+                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                          title="View"
+                        >
+                          <HiOutlineEye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleEdit(blog)}
+                          className="p-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
+                          title="Edit"
+                        >
+                          <HiOutlinePencil className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(blog)}
+                          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                          title="Delete"
+                        >
+                          <HiOutlineTrash className="w-4 h-4" />
+                        </button>
+                       
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Table Footer with Pagination */}
+          <div className="border-t border-gray-200 bg-gray-50/50 px-5 py-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-500">
+                Showing <span className="font-medium text-gray-900">1</span> to{" "}
+                <span className="font-medium text-gray-900">
+                  {filteredBlogs.length}
+                </span>{" "}
+                of <span className="font-medium text-gray-900">156</span>{" "}
+                results
+              </p>
+
+              <div className="flex items-center gap-2">
+                <button className="p-2 border border-gray-200 rounded-lg hover:bg-white hover:border-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                  <HiOutlineChevronLeft className="w-4 h-4" />
+                </button>
+                <button className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all">
+                  1
+                </button>
+                <button className="px-3 py-1.5 text-gray-600 text-sm hover:bg-gray-100 rounded-lg transition-all">
+                  2
+                </button>
+                <button className="px-3 py-1.5 text-gray-600 text-sm hover:bg-gray-100 rounded-lg transition-all">
+                  3
+                </button>
+                <button className="px-3 py-1.5 text-gray-600 text-sm hover:bg-gray-100 rounded-lg transition-all">
+                  4
+                </button>
+                <span className="text-gray-400">...</span>
+                <button className="px-3 py-1.5 text-gray-600 text-sm hover:bg-gray-100 rounded-lg transition-all">
+                  10
+                </button>
+                <button className="p-2 border border-gray-200 rounded-lg hover:bg-white hover:border-gray-300 transition-all">
+                  <HiOutlineChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
