@@ -60,10 +60,11 @@ export default function AddBlog() {
   };
 
   if (!isLoaded) return null;
-
+  console.log(user);
+  
   const role = user?.publicMetadata?.role;
 
-  if (!isSignedIn || (role !== "admin" || role !== "author")) {
+  if (!isSignedIn || (role !== "admin" && role !== "author")) {
     return <div>You are not allowed to access this page</div>;
   }
 

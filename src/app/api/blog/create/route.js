@@ -16,7 +16,7 @@ export async function POST(req) {
     const role = user?.publicMetadata?.role;
     const userId = user?.publicMetadata?.userMongoId;
 
-    if (role !== "admin" || role !== "author") {
+    if (role !== "admin" && role !== "author") {
       return new Response("Unauthorized", { status: 403 });
     }
 
