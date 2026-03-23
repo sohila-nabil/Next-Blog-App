@@ -16,6 +16,8 @@ import {
 } from "react-icons/hi";
 import Pagination from "../../../../components/Pagination";
 import axios from "axios";
+import { toast } from "react-toastify";
+import ModalComponent from "../../../../components/Admin/Modal";
 
 export default function BlogList() {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -25,6 +27,11 @@ export default function BlogList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all");
   const [categories, setCategories] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [publishedStatus, setPublishedStatus] = useState(0);
+  const [draftStatus, setDraftStatus] = useState(0);
+
+  const [id, setId] = useState();
 
   // Status colors mapping
   const statusColors = {
@@ -61,6 +68,8 @@ export default function BlogList() {
         setTotalPages(res.data.totalPages);
         setCurrentPage(res.data.currentPage);
         setCategories(res.data.categories);
+        setDraftStatus(res.data.draftStatus);
+        setPublishedStatus(res.data.publishedStatus);
       } catch (error) {
         console.log(error);
       }
@@ -77,12 +86,38 @@ export default function BlogList() {
     return () => clearTimeout(delay);
   }, [searchTerm, category, fetchBlogs, currentPage]);
 
+  const updateStatus = async (id, status) => {
+    try {
+      const res = await axios.patch(`/api/blog/status/${id}`, { status }); // <-- pass as object
+      console.log(res.data);
+      if (res.data.success) {
+        setBlogs((prevBlogs) =>
+          prevBlogs.map((b) => (b._id === id ? { ...b, status } : b)),
+        );
+
+        toast(`${res.data.message}  to  ${status}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleEdit = (blog) => {
     console.log("Edit:", blog);
   };
 
-  const handleDelete = (blog) => {
-    console.log("Delete:", blog);
+  const handleDelete = async (id) => {
+    try {
+      const res = await axios.delete(`/api/blog/delete/${id}`);
+      if (res.data.success) {
+        toast(res.data.message);
+        setBlogs((prevBlogs) => prevBlogs.filter((b) => b._id !== id));
+        setOpenModal(false);
+      }
+    } catch (error) {
+      console.log(error);
+      toast(error);
+    }
   };
 
   const handleView = (blog) => {
@@ -133,7 +168,9 @@ export default function BlogList() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Total Blogs</p>
-                <p className="text-3xl font-bold text-gray-900">156</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {blogs?.length}
+                </p>
               </div>
               <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
                 <svg
@@ -160,7 +197,7 @@ export default function BlogList() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Published</p>
-                <p className="text-3xl font-bold text-gray-900">98</p>
+                <p className="text-3xl font-bold text-gray-900">{publishedStatus}</p>
               </div>
               <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
                 <svg
@@ -187,7 +224,7 @@ export default function BlogList() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Drafts</p>
-                <p className="text-3xl font-bold text-gray-900">42</p>
+                <p className="text-3xl font-bold text-gray-900">{draftStatus}</p>
               </div>
               <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
                 <svg
@@ -322,9 +359,9 @@ export default function BlogList() {
                   <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Status
                   </th>
-                  {/* <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Stats
-                  </th> */}
+                  </th>
                   <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Date
                   </th>
@@ -392,34 +429,39 @@ export default function BlogList() {
                     {/* Author */}
                     <td className="p-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-linear-to-br from-gray-100 to-gray-200 overflow-hidden ring-2 ring-white"></div>
                         <span className="text-sm font-medium text-gray-700">
-                          {blog.userId}
+                          {blog?.userId?.firstName +
+                            " " +
+                            blog?.userId?.lastName}
                         </span>
                       </div>
                     </td>
 
                     {/* Status */}
                     <td className="p-5">
-                      <span
-                        className={`px-3 py-1.5 text-xs font-medium rounded-lg ${statusColors[blog.status]}`}
+                      <select
+                        value={blog.status}
+                        onChange={(e) => updateStatus(blog._id, e.target.value)}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-lg cursor-pointer ${
+                          statusColors[blog.status]
+                        }`}
                       >
-                        {blog.status}
-                      </span>
+                        <option value="Draft">Draft</option>
+                        <option value="Published">Published</option>
+                      </select>
                     </td>
 
-                    {/* Stats
                     <td className="p-5">
                       <div className="flex items-center gap-4">
                         <div className="w-px h-8 bg-gray-200"></div>
                         <div className="text-center">
                           <p className="text-sm font-semibold text-gray-900">
-                            {blog.comments}
+                            {blog.comments.length || 0}
                           </p>
                           <p className="text-xs text-gray-500">comments</p>
                         </div>
                       </div>
-                    </td> */}
+                    </td>
 
                     {/* Date */}
                     <td className="p-5">
@@ -442,14 +484,16 @@ export default function BlogList() {
                       <div className="flex items-center gap-2 opacity-70 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => handleEdit(blog)}
-                          className="p-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
+                          className="cursor-pointer p-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
                           title="Edit"
                         >
                           <HiOutlinePencil className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDelete(blog)}
-                          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                          onClick={() => {
+                            (setOpenModal(true), setId(blog._id));
+                          }}
+                          className="cursor-pointer p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                           title="Delete"
                         >
                           <HiOutlineTrash className="w-4 h-4" />
@@ -466,38 +510,11 @@ export default function BlogList() {
           <div className="border-t border-gray-200 bg-gray-50/50 px-5 py-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-500">
-                Showing <span className="font-medium text-gray-900">1</span> to
+                results{" "}
                 <span className="font-medium text-gray-900">
                   {blogs.length}
-                </span>
-                of <span className="font-medium text-gray-900">156</span>{" "}
-                results
+                </span>{" "}
               </p>
-
-              {/* <div className="flex items-center gap-2">
-                <button className="p-2 border border-gray-200 rounded-lg hover:bg-white hover:border-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                  <HiOutlineChevronLeft className="w-4 h-4" />
-                </button>
-                <button className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all">
-                  1
-                </button>
-                <button className="px-3 py-1.5 text-gray-600 text-sm hover:bg-gray-100 rounded-lg transition-all">
-                  2
-                </button>
-                <button className="px-3 py-1.5 text-gray-600 text-sm hover:bg-gray-100 rounded-lg transition-all">
-                  3
-                </button>
-                <button className="px-3 py-1.5 text-gray-600 text-sm hover:bg-gray-100 rounded-lg transition-all">
-                  4
-                </button>
-                <span className="text-gray-400">...</span>
-                <button className="px-3 py-1.5 text-gray-600 text-sm hover:bg-gray-100 rounded-lg transition-all">
-                  10
-                </button>
-                <button className="p-2 border border-gray-200 rounded-lg hover:bg-white hover:border-gray-300 transition-all">
-                  <HiOutlineChevronRight className="w-4 h-4" />
-                </button>
-              </div> */}
 
               <Pagination
                 currentPage={currentPage}
@@ -508,6 +525,13 @@ export default function BlogList() {
           </div>
         </div>
       </div>
+      {openModal && (
+        <ModalComponent
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          deleteFunction={() => handleDelete(id)}
+        />
+      )}
     </div>
   );
 }

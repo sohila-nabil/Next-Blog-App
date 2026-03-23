@@ -1,6 +1,6 @@
 import { dbConnection } from "../../../../../lib/config/dbConnection";
 import Blog from "../../../../../lib/models/blogModel";
-
+import User from "../../../../../lib/models/userModel";
 export async function POST(req) {
   try {
     await dbConnection();
@@ -23,12 +23,18 @@ export async function POST(req) {
     };
 
     const blogs = await Blog.find(query)
+      .populate("userId", "firstName lastName profilePicture")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
+
     const categories = await Blog.distinct("category");
     const totalBlogs = await Blog.countDocuments(query);
     const totalPages = Math.ceil(totalBlogs / limit);
+
+    // ✅ Await counts
+    const publishedStatus = await Blog.countDocuments({ status: "Published" });
+    const draftStatus = await Blog.countDocuments({ status: "Draft" });
 
     return new Response(
       JSON.stringify({
@@ -37,6 +43,8 @@ export async function POST(req) {
         totalPages,
         currentPage: page,
         categories,
+        publishedStatus,
+        draftStatus,
       }),
       { status: 200 },
     );
