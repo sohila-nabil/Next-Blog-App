@@ -7,9 +7,9 @@ export default function Home() {
   return (
     <>
     <Navbar/>
-    {/* <Header/> */}
-    {/* <BlogList/> */}
-    {/* <Footer/> */}
+    <Header/>
+    <BlogList/>
+    <Footer/>
     </>
   );
 }

@@ -9,16 +9,16 @@ export async function POST(req) {
 
     const user = await currentUser();
     console.log(user);
-    
+
     if (!user) {
-      return new Response("Unauthorized", { status: 401 });
+      return new Response({ success: false, message: "Unauthorized" });
     }
 
     const role = user?.publicMetadata?.role;
     const userId = user?.publicMetadata?.userMongoId;
 
     if (role !== "admin" && role !== "author") {
-      return new Response("Unauthorized", { status: 403 });
+      return new Response({ success: false, message: "Unauthorized" });
     }
 
     const formData = await req.formData();
@@ -29,7 +29,7 @@ export async function POST(req) {
     const file = formData.get("image");
 
     if (!file) {
-      return new Response("No file uploaded", { status: 400 });
+      return new Response({ success: false, message: "No file uploaded" });
     }
 
     const slug = title
@@ -54,7 +54,7 @@ export async function POST(req) {
       title,
       category,
       description,
-      userId, 
+      userId,
       slug,
       image: {
         url: uploadResult.secure_url,
@@ -65,6 +65,6 @@ export async function POST(req) {
     return Response.json({ success: true, data: blogData });
   } catch (error) {
     console.log("ERROR:", error);
-    return new Response("Server Error", { status: 500 });
+    return new Response("Server Error", {error});
   }
 }

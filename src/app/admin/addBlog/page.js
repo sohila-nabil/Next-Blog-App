@@ -9,6 +9,7 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Delta = Quill.import("delta");
 
@@ -55,7 +56,11 @@ export default function AddBlog() {
     try {
       const res = await axios.post(`/api/blog/create`, formData);
       console.log(res);
+      if (res.data.success) {
+        toast("Blog Added Successfully");
+      }
     } catch (error) {
+      toast(error)
       console.log("error creating blog font", error);
     }
   };
@@ -117,8 +122,6 @@ export default function AddBlog() {
               onTextChange={handleTextChange}
             />
           </div>
-
-
           <ImageUpload
             onImageChange={handleImageChange}
             image={image}

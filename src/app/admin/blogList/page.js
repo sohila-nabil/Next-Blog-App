@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   HiOutlinePencil,
   HiOutlineTrash,
@@ -14,112 +14,22 @@ import {
   HiOutlineDocumentDownload,
   HiOutlinePrinter,
 } from "react-icons/hi";
+import Pagination from "../../../../components/Pagination";
+import axios from "axios";
 
 export default function BlogList() {
   const [selectedRows, setSelectedRows] = useState([]);
+  const [blogs, setBlogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Fake blog data
-  const blogs = [
-    {
-      id: "BLG001",
-      image:
-        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=60&h=40&fit=crop",
-      title: "Getting Started with Next.js 14",
-      category: "Technology",
-      author: "John Doe",
-      authorAvatar: "https://i.pravatar.cc/32?u=1",
-      status: "Published",
-      date: "2024-01-15",
-      views: "2.5k",
-      comments: 24,
-      excerpt:
-        "Learn how to build modern web applications with Next.js 14 and its new features...",
-    },
-    {
-      id: "BLG002",
-      image:
-        "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=60&h=40&fit=crop",
-      title: "Understanding React Server Components",
-      category: "Development",
-      author: "Jane Smith",
-      authorAvatar: "https://i.pravatar.cc/32?u=2",
-      status: "Draft",
-      date: "2024-02-01",
-      views: "0",
-      comments: 0,
-      excerpt:
-        "Deep dive into React Server Components and how they revolutionize web development...",
-    },
-    {
-      id: "BLG003",
-      image:
-        "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=60&h=40&fit=crop",
-      title: "Ultimate Guide to Tailwind CSS",
-      category: "CSS",
-      author: "Mike Johnson",
-      authorAvatar: "https://i.pravatar.cc/32?u=3",
-      status: "Published",
-      date: "2024-01-28",
-      views: "1.8k",
-      comments: 12,
-      excerpt:
-        "Master Tailwind CSS with this comprehensive guide covering everything from basics to advanced...",
-    },
-    {
-      id: "BLG004",
-      image:
-        "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=60&h=40&fit=crop",
-      title: "10 Tips for Better Code Quality",
-      category: "Programming",
-      author: "Sarah Wilson",
-      authorAvatar: "https://i.pravatar.cc/32?u=4",
-      status: "Scheduled",
-      date: "2024-03-10",
-      views: "0",
-      comments: 0,
-      excerpt:
-        "Improve your code quality with these 10 essential tips and best practices...",
-    },
-    {
-      id: "BLG005",
-      image:
-        "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=60&h=40&fit=crop",
-      title: "Modern JavaScript Features You Should Know",
-      category: "JavaScript",
-      author: "Alex Chen",
-      authorAvatar: "https://i.pravatar.cc/32?u=5",
-      status: "Published",
-      date: "2024-02-05",
-      views: "3.2k",
-      comments: 31,
-      excerpt:
-        "Explore the latest JavaScript features that will make your code more efficient and readable...",
-    },
-    {
-      id: "BLG006",
-      image:
-        "https://images.unsplash.com/photo-1522252234503-e356532cafd5?w=60&h=40&fit=crop",
-      title: "Introduction to TypeScript",
-      category: "TypeScript",
-      author: "Emily Brown",
-      authorAvatar: "https://i.pravatar.cc/32?u=6",
-      status: "Draft",
-      date: "2024-02-12",
-      views: "0",
-      comments: 0,
-      excerpt:
-        "Get started with TypeScript and learn how it can improve your development experience...",
-    },
-  ];
+  const [category, setCategory] = useState("all");
+  const [categories, setCategories] = useState([]);
 
   // Status colors mapping
   const statusColors = {
     Published: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20",
     Draft: "bg-amber-50 text-amber-700 ring-1 ring-amber-600/20",
-    Scheduled: "bg-blue-50 text-blue-700 ring-1 ring-blue-600/20",
-    Archived: "bg-gray-50 text-gray-700 ring-1 ring-gray-600/20",
   };
 
   const handleSelectAll = (e) => {
@@ -136,6 +46,37 @@ export default function BlogList() {
     );
   };
 
+  const fetchBlogs = useCallback(
+    async (page = 1) => {
+      try {
+        const res = await axios.post("/api/blog/get", {
+          page,
+          limit: 6,
+          searchTerm,
+          category,
+        });
+        console.log(res.data);
+
+        setBlogs(res.data.blogs);
+        setTotalPages(res.data.totalPages);
+        setCurrentPage(res.data.currentPage);
+        setCategories(res.data.categories);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [searchTerm, category],
+  );
+
+  // 🚀 Initial + search/category change
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      fetchBlogs(currentPage);
+    }, 500);
+
+    return () => clearTimeout(delay);
+  }, [searchTerm, category, fetchBlogs, currentPage]);
+
   const handleEdit = (blog) => {
     console.log("Edit:", blog);
   };
@@ -147,13 +88,6 @@ export default function BlogList() {
   const handleView = (blog) => {
     console.log("View:", blog);
   };
-
-  const filteredBlogs = blogs.filter(
-    (blog) =>
-      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.category.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
 
   return (
     <div className="p-8 bg-linear-to-br from-gray-50 to-gray-100 min-h-screen w-5xl">
@@ -327,6 +261,19 @@ export default function BlogList() {
               <button className="px-4 py-2.5 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-all flex items-center gap-2">
                 <HiOutlineFilter className="w-4 h-4" />
                 <span className="hidden sm:inline">Filter</span>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="px-4 py-2 border border-gray-200 rounded-xl text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="all">All</option>
+
+                  {categories.map((cat) => (
+                    <option value={cat} key={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
               </button>
               <button className="px-4 py-2.5 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-all">
                 <HiOutlineRefresh className="w-4 h-4" />
@@ -340,9 +287,6 @@ export default function BlogList() {
                 </span>
                 <button className="text-red-600 hover:text-red-700 text-sm font-medium">
                   Delete
-                </button>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                  Bulk Edit
                 </button>
               </div>
             )}
@@ -378,9 +322,9 @@ export default function BlogList() {
                   <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  {/* <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Stats
-                  </th>
+                  </th> */}
                   <th className="p-5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Date
                   </th>
@@ -392,19 +336,19 @@ export default function BlogList() {
 
               {/* Table Body */}
               <tbody className="divide-y divide-gray-100">
-                {filteredBlogs.map((blog) => (
+                {blogs.map((blog) => (
                   <tr
-                    key={blog.id}
+                    key={blog._id}
                     className={`hover:bg-gray-50/80 transition-all group ${
-                      selectedRows.includes(blog.id) ? "bg-blue-50/50" : ""
+                      selectedRows.includes(blog._id) ? "bg-blue-50/50" : ""
                     }`}
                   >
                     {/* Checkbox */}
                     <td className="p-5">
                       <input
                         type="checkbox"
-                        checked={selectedRows.includes(blog.id)}
-                        onChange={() => handleSelectRow(blog.id)}
+                        checked={selectedRows.includes(blog._id)}
+                        onChange={() => handleSelectRow(blog._id)}
                         className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
                     </td>
@@ -415,7 +359,7 @@ export default function BlogList() {
                         <div className="relative group/image">
                           <div className="w-16 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden ring-1 ring-gray-200 group-hover/image:ring-2 group-hover/image:ring-blue-400 transition-all">
                             <Image
-                              src={blog?.image}
+                              src={blog?.image.url}
                               alt={"blog.title"}
                               width={64}
                               height={48}
@@ -430,11 +374,9 @@ export default function BlogList() {
                           <h3 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
                             {blog.title}
                           </h3>
-                          <p className="text-xs text-gray-500 mt-1 line-clamp-1 max-w-xs">
-                            {blog.excerpt}
-                          </p>
+
                           <span className="text-xs text-gray-400 mt-1 block">
-                            ID: {blog.id}
+                            ID: {blog._id}
                           </span>
                         </div>
                       </div>
@@ -450,17 +392,9 @@ export default function BlogList() {
                     {/* Author */}
                     <td className="p-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-linear-to-br from-gray-100 to-gray-200 overflow-hidden ring-2 ring-white">
-                          <Image
-                            src={blog.authorAvatar}
-                            alt={blog.author}
-                            width={32}
-                            height={32}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+                        <div className="w-8 h-8 rounded-full bg-linear-to-br from-gray-100 to-gray-200 overflow-hidden ring-2 ring-white"></div>
                         <span className="text-sm font-medium text-gray-700">
-                          {blog.author}
+                          {blog.userId}
                         </span>
                       </div>
                     </td>
@@ -474,15 +408,9 @@ export default function BlogList() {
                       </span>
                     </td>
 
-                    {/* Stats */}
+                    {/* Stats
                     <td className="p-5">
                       <div className="flex items-center gap-4">
-                        <div className="text-center">
-                          <p className="text-sm font-semibold text-gray-900">
-                            {blog.views}
-                          </p>
-                          <p className="text-xs text-gray-500">views</p>
-                        </div>
                         <div className="w-px h-8 bg-gray-200"></div>
                         <div className="text-center">
                           <p className="text-sm font-semibold text-gray-900">
@@ -491,19 +419,19 @@ export default function BlogList() {
                           <p className="text-xs text-gray-500">comments</p>
                         </div>
                       </div>
-                    </td>
+                    </td> */}
 
                     {/* Date */}
                     <td className="p-5">
                       <div className="text-sm text-gray-700">
-                        {new Date(blog.date).toLocaleDateString("en-US", {
+                        {new Date(blog.createdAt).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
                         })}
                       </div>
                       <div className="text-xs text-gray-400">
-                        {new Date(blog.date).toLocaleDateString("en-US", {
+                        {new Date(blog.createdAt).toLocaleDateString("en-US", {
                           weekday: "short",
                         })}
                       </div>
@@ -512,13 +440,6 @@ export default function BlogList() {
                     {/* Actions */}
                     <td className="p-5">
                       <div className="flex items-center gap-2 opacity-70 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => handleView(blog)}
-                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                          title="View"
-                        >
-                          <HiOutlineEye className="w-4 h-4" />
-                        </button>
                         <button
                           onClick={() => handleEdit(blog)}
                           className="p-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
@@ -533,7 +454,6 @@ export default function BlogList() {
                         >
                           <HiOutlineTrash className="w-4 h-4" />
                         </button>
-                       
                       </div>
                     </td>
                   </tr>
@@ -546,15 +466,15 @@ export default function BlogList() {
           <div className="border-t border-gray-200 bg-gray-50/50 px-5 py-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-500">
-                Showing <span className="font-medium text-gray-900">1</span> to{" "}
+                Showing <span className="font-medium text-gray-900">1</span> to
                 <span className="font-medium text-gray-900">
-                  {filteredBlogs.length}
-                </span>{" "}
+                  {blogs.length}
+                </span>
                 of <span className="font-medium text-gray-900">156</span>{" "}
                 results
               </p>
 
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <button className="p-2 border border-gray-200 rounded-lg hover:bg-white hover:border-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                   <HiOutlineChevronLeft className="w-4 h-4" />
                 </button>
@@ -577,7 +497,13 @@ export default function BlogList() {
                 <button className="p-2 border border-gray-200 rounded-lg hover:bg-white hover:border-gray-300 transition-all">
                   <HiOutlineChevronRight className="w-4 h-4" />
                 </button>
-              </div>
+              </div> */}
+
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => fetchBlogs(page)}
+              />
             </div>
           </div>
         </div>
