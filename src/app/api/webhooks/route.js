@@ -19,7 +19,7 @@ export async function POST(req) {
         email_addresses,
         username,
       } = evt.data;
-
+      
       const email = email_addresses[0]?.email_address;
 
       const user = await createOrUpdateUser(
@@ -27,7 +27,7 @@ export async function POST(req) {
         first_name,
         last_name,
         image_url,
-        email,
+        email_addresses,
         username,
       );
 
