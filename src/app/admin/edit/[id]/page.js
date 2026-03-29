@@ -17,7 +17,7 @@ export default async function EditBlogPage({ params }) {
    const { id } = await params;
     //  const { isSignedIn, user, isLoaded } = useUser();
    
-  const res = await fetch(`http://localhost:3000/api/blog/one/${id}`, {
+  const res = await fetch(`/api/blog/one/${id}`, {
     cache: "no-store",
   });
 
