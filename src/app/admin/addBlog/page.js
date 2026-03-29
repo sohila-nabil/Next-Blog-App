@@ -54,7 +54,10 @@ export default function AddBlog() {
     formData.append("image", image);
 
     try {
-      const res = await axios.post(`/api/blog/create`, formData);
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/blog/create`,
+        formData,
+      );
       console.log(res);
       if (res.data.success) {
         toast("Blog Added Successfully");

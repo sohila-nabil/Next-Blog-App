@@ -1,14 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import BlogsFilter from "./BlogsFilter";
-import axios from "axios";
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
   useEffect(() => {
     const fetchBlogs = async () => {
       const res = await fetch(
-        `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/blog/all`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/blog/all`,
         {
           cache: "no-store",
         },

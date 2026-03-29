@@ -8,10 +8,6 @@ import {
   HiOutlineSearch,
   HiOutlineFilter,
   HiOutlineRefresh,
-  HiDotsVertical,
-  HiOutlineChevronLeft,
-  HiOutlineChevronRight,
-  HiOutlineDocumentDownload,
   HiOutlinePrinter,
 } from "react-icons/hi";
 import Pagination from "../../../../components/Pagination";
@@ -60,13 +56,13 @@ export default function BlogList() {
     async (page = 1) => {
       try {
         const res = await axios.post(
-          `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/blog/get`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/blog/get`,
           {
             page,
             limit: 6,
             searchTerm,
             category,
-          }
+          },
         );
         console.log(res.data);
 

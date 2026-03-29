@@ -25,7 +25,7 @@ const Comment = ({ blog, user }) => {
     const fetchComments = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/comments/${blog._id}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/${blog._id}`,
         );
         const data = await res.json();
         if (data.success) {
@@ -44,7 +44,7 @@ const Comment = ({ blog, user }) => {
     try {
       setLoading(true);
       const res = await fetch(
-        `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/blog/comment/${blog._id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/blog/comment/${blog._id}`,
         {
           method: "POST",
           headers: {
@@ -103,7 +103,7 @@ const Comment = ({ blog, user }) => {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/comments/delete/${blog._id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/delete/${blog._id}`,
         {
           method: "DELETE",
           headers: {

@@ -27,7 +27,7 @@ const BlogsPage = () => {
     const fetchBlogs = async () => {
       try {
         const res = await axios.get(
-          `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/blog/all`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/blog/all`,
         );
         console.log(res.data);
 
