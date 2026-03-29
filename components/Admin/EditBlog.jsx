@@ -1,19 +1,17 @@
-// pages/admin/addBlog.js
 "use client";
-import React, { useRef, useState, useCallback } from "react";
-import Editor from "../../../../components/Admin/Tiptap ";
-import Image from "next/image";
-import Title from "../../../../components/Admin/Title";
-import ImageUpload from "../../../../components/Admin/ImageUpload";
+import React, { useCallback, useRef, useState } from "react";
+import Title from "./Title";
+import Editor from "./Tiptap ";
+import ImageUpload from "./ImageUpload";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { useUser } from "@clerk/nextjs";
-import axios from "axios";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const Delta = Quill.import("delta");
 
-export default function AddBlog() {
+const EditBlog = ({ blog }) => {
   const { isSignedIn, user, isLoaded } = useUser();
   const [image, setImage] = useState();
   const [preview, setPreview] = useState();
@@ -21,8 +19,8 @@ export default function AddBlog() {
   const quillRef = useRef();
 
   const [blogData, setBlogData] = useState({
-    title: "",
-    category: "",
+    title: blog.title || "",
+    category: blog.category || "",
   });
 
   const handleChange = (e) => {
@@ -54,43 +52,46 @@ export default function AddBlog() {
     formData.append("image", image);
 
     try {
-      const res = await axios.post(`/api/blog/create`, formData);
+      const res = await axios.patch(`/api/blog/edit/${blog._id}`, formData);
       console.log(res);
       if (res.data.success) {
-        toast("Blog Added Successfully");
+        toast("Blog Edit Successfully");
       }
     } catch (error) {
-      toast(error)
+      toast(error);
       console.log("error creating blog font", error);
     }
   };
 
-   if (!isLoaded) return null;
+  if (!isLoaded) return null;
 
-   if (!isSignedIn || user?.publicMetadata?.role !== "admin") {
-     return (
-       <div className="p-8 max-w-5xl bg-linear-to-br from-gray-50 to-gray-100 min-h-screen">
-         <div className=" mx-auto">
-           <h1 className="text-3xl font-bold bg-linear-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-             User Management
-           </h1>
-           <div className="mt-10 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
-             <p className="text-gray-600">
-               You are not allowed to access this page
-             </p>
-           </div>
-         </div>
-       </div>
-     );
-   }
+  const role = user?.publicMetadata?.role;
+
+  if (!isSignedIn || (role !== "admin" && role !== "author")) {
+    return <div>You are not allowed to access this page</div>;
+  }
+
+  const stripHtml = (html) => {
+    if (!html) return "";
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
+
+  const getExcerpt = (content) => {
+    const text = stripHtml(content);
+    // if (text.length <= maxLength) return text;
+    return text;
+  };
+  console.log(blog);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       {/* Header */}
-      <Title title={"Add New Blog"} desc={"Create a new blog post"} />
+      <Title title={"Edit Blog"} desc={"Edit blog post"} />
 
       {/* Form Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6 max-w-4xl ">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6 max-w-4xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title Field */}
           <div>
@@ -129,7 +130,7 @@ export default function AddBlog() {
           <div className=" mx-auto mt-10">
             <Editor
               ref={quillRef}
-              defaultValue={new Delta().insert("Hello World\n")}
+              defaultValue={new Delta().insert(getExcerpt(blog.description))}
               onTextChange={handleTextChange}
             />
           </div>
@@ -137,7 +138,7 @@ export default function AddBlog() {
             onImageChange={handleImageChange}
             image={image}
             setImage={setImage}
-            preview={preview}
+            preview={preview || blog.image.url}
           />
 
           {/* Form Actions */}
@@ -146,11 +147,13 @@ export default function AddBlog() {
               type="submit"
               className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
             >
-              Add Blog
+              Edit Blog
             </button>
           </div>
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default EditBlog;

@@ -9,7 +9,7 @@ const layout = ({ children }) => {
     <div className="flex">
       <SidebarCom />
 
-      <main className="flex-1 ml-20 sm:ml-64 p-6 bg-gray-50 min-h-screen w-45">
+      <main className="flex-1 ml-20 sm:ml-64 p-6 bg-gray-50 min-h-screen w-52">
         <ToastContainer
           position="top-right"
           autoClose={5000}

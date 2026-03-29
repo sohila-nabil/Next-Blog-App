@@ -14,9 +14,13 @@ import {
 import ModalComponent from "../../../../components/Admin/Modal";
 import Pagination from "../../../../components/Pagination";
 import { toast } from "react-toastify";
-
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 export default function UserList() {
+  const router = useRouter();
+  const { isSignedIn, user, isLoaded } = useUser();
+
   const [selectedRows, setSelectedRows] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,6 +30,7 @@ export default function UserList() {
   const [totalUsers, setTotalUsers] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [id, setId] = useState();
+
 
   const fetchUsers = useCallback(
     async (page = 1) => {
@@ -70,27 +75,19 @@ export default function UserList() {
     );
   };
 
-  const handleView = (user) => {
-    console.log("View user:", user);
+  const handleDelete = async (id) => {
+    try {
+      const res = await axios.delete(`/api/user/delete/${id}`);
+      if (res.data.success) {
+        toast(res.data.message);
+        setUsers((prevUsers) => prevUsers.filter((u) => u.clerkId !== id));
+        setOpenModal(false);
+      }
+    } catch (error) {
+      console.log(error);
+      toast(error);
+    }
   };
-
-  const handleEdit = (user) => {
-    console.log("Edit user:", user);
-  };
-
- const handleDelete = async (id) => {
-   try {
-     const res = await axios.delete(`/api/user/delete/${id}`);
-     if (res.data.success) {
-       toast(res.data.message);
-       setUsers((prevUsers) => prevUsers.filter((u) => u._id !== id));
-       setOpenModal(false);
-     }
-   } catch (error) {
-     console.log(error);
-     toast(error);
-   }
- };
 
   const handleSendEmail = (user) => {
     console.log("Send email to:", user.email);
@@ -103,6 +100,24 @@ export default function UserList() {
       year: "numeric",
     });
   };
+
+
+  if (!isLoaded) return null;
+
+  if (!isSignedIn || user?.publicMetadata?.role !== "admin") {
+    return (
+      <div className="p-8 max-w-5xl bg-linear-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div className=" mx-auto">
+          <h1 className="text-3xl font-bold bg-linear-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            User Management
+          </h1>
+          <div className="mt-10 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
+            <p className="text-gray-600">You are not allowed to access this page</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-5xl bg-linear-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -260,19 +275,13 @@ export default function UserList() {
                     <td className="p-5">
                       <div className="flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
                         <button
-                          onClick={() => handleView(user)}
+                          onClick={() => router.push(`/admin/user/${user._id}`)}
                           className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                           title="View Profile"
                         >
                           <HiOutlineEye className="w-4 h-4" />
                         </button>
-                        <button
-                          onClick={() => handleEdit(user)}
-                          className="p-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
-                          title="Edit User"
-                        >
-                          <HiOutlinePencil className="w-4 h-4" />
-                        </button>
+
                         <button
                           onClick={() => handleSendEmail(user)}
                           className="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-all"

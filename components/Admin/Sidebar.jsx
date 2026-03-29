@@ -17,11 +17,13 @@ import {
   HiTable,
   HiUser,
   HiViewBoards,
+  HiHome,
 } from "react-icons/hi";
 
 const SidebarCom = () => {
   const menuItems = [
-    { href: "/", icon: HiChartPie, label: "Dashboard" },
+    { href: "/", icon: HiHome, label: "Home" },
+    { href: "/admin", icon: HiChartPie, label: "Dashboard" },
     { href: "/admin/addBlog", icon: HiViewBoards, label: "Add Blog" },
     { href: "/admin/blogList", icon: HiInbox, label: "Blog List" },
     { href: "/admin/users", icon: HiUser, label: "Users" },
