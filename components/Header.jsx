@@ -84,7 +84,7 @@ const Header = () => {
               <HiOutlineArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="/categories"
+              href="/"
               className="px-8 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-full hover:border-blue-600 hover:text-blue-600 transition-all"
             >
               Browse Categories
