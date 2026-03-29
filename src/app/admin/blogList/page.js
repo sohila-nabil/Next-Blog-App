@@ -104,8 +104,6 @@ export default function BlogList() {
     }
   };
 
-  
-
   const handleDelete = async (id) => {
     try {
       const res = await axios.delete(`/api/blog/delete/${id}`);
@@ -123,24 +121,24 @@ export default function BlogList() {
   const handleView = (blog) => {
     console.log("View:", blog);
   };
-   if (!isLoaded) return null;
+  if (!isLoaded) return null;
 
-   if (!isSignedIn || user?.publicMetadata?.role !== "admin") {
-     return (
-       <div className="p-8 max-w-5xl bg-linear-to-br from-gray-50 to-gray-100 min-h-screen">
-         <div className=" mx-auto">
-           <h1 className="text-3xl font-bold bg-linear-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-             User Management
-           </h1>
-           <div className="mt-10 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
-             <p className="text-gray-600">
-               You are not allowed to access this page
-             </p>
-           </div>
-         </div>
-       </div>
-     );
-   }
+  if (!isSignedIn || user?.publicMetadata?.role !== "admin") {
+    return (
+      <div className="p-8 max-w-5xl bg-linear-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div className=" mx-auto">
+          <h1 className="text-3xl font-bold bg-linear-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            User Management
+          </h1>
+          <div className="mt-10 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
+            <p className="text-gray-600">
+              You are not allowed to access this page
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 bg-linear-to-br from-gray-50 to-gray-100 min-h-screen w-5xl">
@@ -175,7 +173,7 @@ export default function BlogList() {
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              <span>New Post</span>
+              <Link href={"/admin/addBlog"}>New Post</Link>
             </button>
           </div>
         </div>
@@ -215,7 +213,9 @@ export default function BlogList() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Published</p>
-                <p className="text-3xl font-bold text-gray-900">{publishedStatus}</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {publishedStatus}
+                </p>
               </div>
               <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
                 <svg
@@ -242,7 +242,9 @@ export default function BlogList() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Drafts</p>
-                <p className="text-3xl font-bold text-gray-900">{draftStatus}</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {draftStatus}
+                </p>
               </div>
               <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
                 <svg
@@ -501,7 +503,7 @@ export default function BlogList() {
                     <td className="p-5">
                       <div className="flex items-center gap-2 opacity-70 group-hover:opacity-100 transition-opacity">
                         <Link
-                        href={`/admin/edit/${blog._id}`}
+                          href={`/admin/edit/${blog._id}`}
                           className="cursor-pointer p-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
                           title="Edit"
                         >

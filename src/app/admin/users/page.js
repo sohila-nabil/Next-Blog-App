@@ -3,7 +3,6 @@ import axios from "axios";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import {
-  HiOutlinePencil,
   HiOutlineTrash,
   HiOutlineEye,
   HiOutlineSearch,
@@ -36,7 +35,7 @@ export default function UserList() {
     async (page = 1) => {
       try {
         const res = await axios.post(
-          `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/user/get`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/get`,
           {
             page,
             limit: 6,
@@ -80,7 +79,7 @@ export default function UserList() {
 
   const handleDelete = async (id) => {
     try {
-      const res = await axios.delete(`/api/user/delete/${id}`);
+      const res = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/delete/${id}`);
       if (res.data.success) {
         toast(res.data.message);
         setUsers((prevUsers) => prevUsers.filter((u) => u.clerkId !== id));
@@ -135,7 +134,7 @@ export default function UserList() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-5 mb-8">
+        <div className="grid grid-cols-1  gap-5 mb-8">
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
             <div className="flex items-center justify-between">
               <div>

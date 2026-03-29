@@ -7,9 +7,6 @@ import {
   HiOutlineDocumentText,
   HiOutlinePencilAlt,
   HiOutlineEye,
-  HiOutlineSearch,
-  HiOutlineChevronLeft,
-  HiOutlineChevronRight,
   HiOutlineCalendar,
   HiOutlinePhotograph,
 } from "react-icons/hi";
@@ -26,7 +23,7 @@ export default function BlogDashboard() {
   const fetchBlogs = useCallback(async (page = 1) => {
     try {
       const res = await axios.post(
-        `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/blog/get`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/blog/get`,
         {
           page,
           limit: 6,
@@ -45,7 +42,7 @@ export default function BlogDashboard() {
   const fetchUsers = useCallback(async (page = 1) => {
     try {
       const res = await axios.post(
-        `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/user/get`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/get`,
         {
           page,
           limit: 6,
@@ -94,7 +91,9 @@ export default function BlogDashboard() {
       <div className="p-8 max-w-5xl bg-linear-to-br from-gray-50 to-gray-100 min-h-screen">
         <div className=" mx-auto">
           <div className="mt-10 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
-            <p className="text-gray-600">You are not allowed to access this page</p>
+            <p className="text-gray-600">
+              You are not allowed to access this page
+            </p>
           </div>
         </div>
       </div>

@@ -52,7 +52,10 @@ const EditBlog = ({ blog }) => {
     formData.append("image", image);
 
     try {
-      const res = await axios.patch(`/api/blog/edit/${blog._id}`, formData);
+      const res = await axios.patch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/blog/edit/${blog._id}`,
+        formData,
+      );
       console.log(res);
       if (res.data.success) {
         toast("Blog Edit Successfully");

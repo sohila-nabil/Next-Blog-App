@@ -5,7 +5,7 @@ export async function GET() {
   try {
     await dbConnection();
 
-    const blogs = await Blog.find().populate(
+    const blogs = await Blog.find({ status: "Published" }).populate(
       "userId",
       "firstName lastName username profilePicture",
     );

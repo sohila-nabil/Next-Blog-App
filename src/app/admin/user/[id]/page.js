@@ -9,14 +9,11 @@ import {
   HiOutlineUser,
   HiOutlineCalendar,
   HiOutlineIdentification,
-  HiOutlinePencil,
-  HiOutlineTrash,
 } from "react-icons/hi";
 import { dbConnection } from "../../../../../lib/config/dbConnection";
 import User from "../../../../../lib/models/userModel";
 
 export default async function UserDetailPage({ params }) {
-  // Await params since it's a Promise in Next.js App Router
   const { id } = await params;
 
   await dbConnection();
