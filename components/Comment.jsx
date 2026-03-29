@@ -1,135 +1,3 @@
-// "use client";
-
-// import Image from "next/image";
-// import React, { useEffect, useState } from "react";
-
-// const Comment = ({ blog, user }) => {
-//   const [comment, setComment] = useState("");
-//   const [comments, setComments] = useState(blog.comments || []);
-//   const [loading, setLoading] = useState(false);
-
-//   useEffect(() => {
-//     const fetchCommets = async () => {
-//       try {
-//         const res = await fetch(`/api/comments/${blog._id}`);
-//         const data = await res.json();
-//         if (data.success) {
-//           setComments(data.comments);
-//         }
-//       } catch (error) {
-//         console.log(error);
-//       }
-//     };
-//     fetchCommets();
-//   }, [blog._id]);
-
-//   const handleSubmit = async () => {
-//     if (!comment.trim()) return;
-
-//     try {
-//       setLoading(true);
-//       const res = await fetch(`/api/blog/comment/${blog._id}`, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           text: comment,
-//           user: user?.publicMetadata.userMongoId,
-//         }),
-//       });
-
-//       const data = await res.json();
-
-//       if (data.success) {
-//         setComments(data.blog.comments);
-//         setComment("");
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   console.log("comments", comments);
-
-//   return (
-//     <div className="mt-12 pt-8 border-t border-gray-200">
-//       <h3 className="text-xl font-bold text-gray-900 mb-6">Comments</h3>
-
-//       <div className="bg-gray-50 rounded-xl p-6">
-//         {comments.length === 0 && (
-//           <p className="text-gray-500 text-center">
-//             No comments yet. Be the first to comment!
-//           </p>
-//         )}
-//         <div className="flex items-center gap-3 mt-6">
-//           <div className="relative">
-//             <Image
-//               width={40}
-//               height={40}
-//               className="rounded-full"
-//               src={user?.imageUrl}
-//               alt="user"
-//             />
-//             <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
-//           </div>
-
-//           <div className="flex items-center gep-[14px] w-full">
-//             <textarea
-//               className="px-4 py-2 rounded-lg w-full border focus:outline-none focus:ring-2 focus:ring-blue-400"
-//               placeholder="Write a comment..."
-//               value={comment}
-//               onChange={(e) => setComment(e.target.value)}
-//               rows={2}
-//               onKeyDown={(e) => {
-//                 if (e.key === "Enter" && !e.shiftKey) {
-//                   e.preventDefault();
-//                   handleSubmit();
-//                 }
-//               }}
-//             />
-
-//             <button
-//               onClick={handleSubmit}
-//               disabled={loading || !comment.trim()}
-//               className="mt-2 self-end bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer"
-//             >
-//               {loading ? "Posting..." : "Post"}
-//             </button>
-//           </div>
-//         </div>
-
-//         {comments.length > 0 &&
-//           comments.map((item, index) => (
-//             <div
-//               key={index}
-//               className="mb-4 border-b pb-2 mt-6 flex items-start gap-6"
-//             >
-//               <div className="flex items-center gap-2">
-//                 <Image
-//                   width={40}
-//                   height={40}
-//                   className="rounded-full"
-//                   src={item?.user?.profilePicture}
-//                   alt="user"
-//                 />
-//                 <p className="text-sm text-gray-500 mt-4 mr-2">
-//                   - {item?.user?.username || "Anonymous"}
-//                 </p>
-//               </div>
-
-//               <p className="text-gray-800">{item.text}</p>
-//             </div>
-//           ))}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Comment;
-
 "use client";
 
 import Image from "next/image";
@@ -156,7 +24,9 @@ const Comment = ({ blog, user }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await fetch(`/api/comments/${blog._id}`);
+        const res = await fetch(
+          `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/comments/${blog._id}`,
+        );
         const data = await res.json();
         if (data.success) {
           setComments(data.comments);
@@ -173,16 +43,19 @@ const Comment = ({ blog, user }) => {
 
     try {
       setLoading(true);
-      const res = await fetch(`/api/blog/comment/${blog._id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/blog/comment/${blog._id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: comment,
+            user: user?.publicMetadata?.userMongoId,
+          }),
         },
-        body: JSON.stringify({
-          text: comment,
-          user: user?.publicMetadata?.userMongoId,
-        }),
-      });
+      );
 
       const data = await res.json();
 
@@ -229,12 +102,14 @@ const Comment = ({ blog, user }) => {
     if (!confirm("Are you sure you want to delete this comment?")) return;
 
     try {
-      const res = await fetch(`/api/comments/delete/${blog._id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const res = await fetch(
+        `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/comments/delete/${blog._id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
           userId: user?.publicMetadata?.userMongoId,
           commentId,
         }),
@@ -277,8 +152,6 @@ const Comment = ({ blog, user }) => {
       console.log(error);
     }
   };
-
-  
 
   const isCommentOwner = (commentUserId) => {
     return commentUserId === user?.publicMetadata?.userMongoId;

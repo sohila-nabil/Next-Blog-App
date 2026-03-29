@@ -35,11 +35,14 @@ export default function UserList() {
   const fetchUsers = useCallback(
     async (page = 1) => {
       try {
-        const res = await axios.post("/api/user/get", {
-          page,
-          limit: 6,
-          searchTerm,
-        });
+        const res = await axios.post(
+          `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/user/get`,
+          {
+            page,
+            limit: 6,
+            searchTerm,
+          },
+        );
         console.log(res.data);
         setUsers(res.data.users);
         setTotalUsers(res.data.totalUsers);

@@ -25,10 +25,13 @@ export default function BlogDashboard() {
   const itemsPerPage = 5;
   const fetchBlogs = useCallback(async (page = 1) => {
     try {
-      const res = await axios.post("/api/blog/get", {
-        page,
-        limit: 6,
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/blog/get`,
+        {
+          page,
+          limit: 6,
+        },
+      );
       console.log(res.data);
 
       setBlogs(res.data.blogs);
@@ -41,10 +44,13 @@ export default function BlogDashboard() {
   }, []);
   const fetchUsers = useCallback(async (page = 1) => {
     try {
-      const res = await axios.post("/api/user/get", {
-        page,
-        limit: 6,
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/user/get`,
+        {
+          page,
+          limit: 6,
+        },
+      );
       console.log(res.data);
       setUsers(res.data.users);
     } catch (error) {

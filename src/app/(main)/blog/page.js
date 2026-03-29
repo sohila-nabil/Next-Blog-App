@@ -1,23 +1,17 @@
 "use client";
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   HiOutlineSearch,
   HiOutlineFilter,
-  HiOutlineUser,
   HiOutlineCalendar,
-  HiOutlineClock,
-  HiOutlineBookmark,
-  HiOutlineShare,
   HiOutlineChevronDown,
   HiOutlineX,
 } from "react-icons/hi";
 import axios from "axios";
 import Navbar from "../../../../components/Navbar";
 
-// Get unique categories and authors
-// const categories = [...new Set(blogs.map((blog) => blog.category))];
 
 const BlogsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,7 +26,9 @@ const BlogsPage = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get("/api/blog/all");
+        const res = await axios.get(
+          `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/blog/all`,
+        );
         console.log(res.data);
 
         setBlogs(res.data.blogs);
@@ -47,7 +43,6 @@ const BlogsPage = () => {
     fetchBlogs();
   }, []);
 
-  // Use useMemo to compute filtered blogs instead of useEffect
   const filteredBlogs = useMemo(() => {
     let filtered = [...blogs];
 

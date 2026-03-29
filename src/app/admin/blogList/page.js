@@ -59,12 +59,15 @@ export default function BlogList() {
   const fetchBlogs = useCallback(
     async (page = 1) => {
       try {
-        const res = await axios.post("/api/blog/get", {
-          page,
-          limit: 6,
-          searchTerm,
-          category,
-        });
+        const res = await axios.post(
+          `${process.env.NEXT_BACKEND_URL_PRODUCTION}/api/blog/get`,
+          {
+            page,
+            limit: 6,
+            searchTerm,
+            category,
+          }
+        );
         console.log(res.data);
 
         setBlogs(res.data.blogs);
