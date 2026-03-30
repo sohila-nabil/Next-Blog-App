@@ -5,7 +5,7 @@ import BlogItem from "./BlogItem";
 const BlogsFilter = ({ blogs }) => {
   return (
     <div>
-      <div className="flex flex-wrap justify-around gap-1 gap-y-10 mb-16 xl:mx-11">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 xl:mx-11">
         {blogs.map((blog) => (
           <BlogItem key={blog._id} blog={blog} />
         ))}
