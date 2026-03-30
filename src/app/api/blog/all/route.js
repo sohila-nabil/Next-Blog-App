@@ -9,7 +9,9 @@ export async function GET() {
       "userId",
       "firstName lastName username profilePicture",
     );
-    const categories = await Blog.distinct("category");
+    const categories = await Blog.find({ status: "Published" }).distinct(
+      "category",
+    );
 
     return new Response(
       JSON.stringify({
