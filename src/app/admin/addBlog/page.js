@@ -2,7 +2,6 @@
 "use client";
 import React, { useRef, useState, useCallback } from "react";
 import Editor from "../../../../components/Admin/Tiptap ";
-import Image from "next/image";
 import Title from "../../../../components/Admin/Title";
 import ImageUpload from "../../../../components/Admin/ImageUpload";
 import Quill from "quill";
@@ -61,31 +60,38 @@ export default function AddBlog() {
       console.log(res);
       if (res.data.success) {
         toast("Blog Added Successfully");
+        setBlogData({
+          title: "",
+          category: "",
+        });
+        setContent("");
+        setImage(null);
+        setPreview(null);
       }
     } catch (error) {
-      toast(error)
+      toast(error);
       console.log("error creating blog font", error);
     }
   };
 
-   if (!isLoaded) return null;
+  if (!isLoaded) return null;
 
-   if (!isSignedIn || user?.publicMetadata?.role !== "admin") {
-     return (
-       <div className="p-8 max-w-5xl bg-linear-to-br from-gray-50 to-gray-100 min-h-screen">
-         <div className=" mx-auto">
-           <h1 className="text-3xl font-bold bg-linear-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-             User Management
-           </h1>
-           <div className="mt-10 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
-             <p className="text-gray-600">
-               You are not allowed to access this page
-             </p>
-           </div>
-         </div>
-       </div>
-     );
-   }
+  if (!isSignedIn || user?.publicMetadata?.role !== "admin") {
+    return (
+      <div className="p-8 max-w-5xl bg-linear-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div className=" mx-auto">
+          <h1 className="text-3xl font-bold bg-linear-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            User Management
+          </h1>
+          <div className="mt-10 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
+            <p className="text-gray-600">
+              You are not allowed to access this page
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
