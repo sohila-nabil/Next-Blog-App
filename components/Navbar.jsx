@@ -211,23 +211,29 @@ const Navbar = () => {
 
             {/* Mobile Write Button */}
             {role === "admin" && (
-              <Link
+              <Show when="signed-in"> <Link
                 href="/admin/addBlog"
                 className="px-5 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-full hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
               >
                 Write a Blog
               </Link>
+              </Show>
+              
             )}
 
             {/* Mobile User Profile */}
             <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-              <div className="w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                JD
-              </div>
-              <div>
-                <p className="font-medium text-gray-900">John Doe</p>
-                <p className="text-xs text-gray-500">john@example.com</p>
-              </div>
+              <Show when="signed-in">
+                <UserButton />
+              </Show>
+              <Show when="signed-out">
+                <Link
+                  href={"/sign-in"}
+                  className="border border-slate-400 cursor-pointer py-1 px-2  rounded-[5px]"
+                >
+                  Sign In
+                </Link>
+              </Show>
             </div>
           </div>
         </div>
