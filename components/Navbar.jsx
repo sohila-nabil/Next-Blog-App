@@ -3,16 +3,17 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { 
-  HiOutlineMenu, 
-  HiOutlineX, 
+import {
+  HiOutlineMenu,
+  HiOutlineX,
   HiOutlineSearch,
   HiOutlineBell,
-  HiOutlineBookmark
+  HiOutlineBookmark,
 } from "react-icons/hi";
 import { assets } from "../Assets/assets";
-import {  UserButton, Show } from "@clerk/nextjs";
+import { UserButton, Show, useUser } from "@clerk/nextjs";
 const Navbar = () => {
+  const { user } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,6 +26,10 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  let role;
+  if (user) {
+    role = user?.publicMetadata?.role;
+  }
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -45,11 +50,13 @@ const Navbar = () => {
   };
 
   return (
-    <nav className={`sticky top-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? "bg-white/95 backdrop-blur-md shadow-md" 
-        : "bg-white shadow-sm"
-    }`}>
+    <nav
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-white/95 backdrop-blur-md shadow-md"
+          : "bg-white shadow-sm"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -66,7 +73,9 @@ const Navbar = () => {
               <span className="text-xl md:text-2xl font-bold bg-linear-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                 BlogSpace
               </span>
-              <span className="text-xs text-gray-400 hidden sm:block">Share your thoughts</span>
+              <span className="text-xs text-gray-400 hidden sm:block">
+                Share your thoughts
+              </span>
             </div>
           </Link>
 
@@ -83,9 +92,11 @@ const Navbar = () => {
                 }`}
               >
                 {link.name}
-                <span className={`absolute -bottom-1 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${
-                  isActive(link.href) ? "w-full" : "w-0 group-hover:w-full"
-                }`}></span>
+                <span
+                  className={`absolute -bottom-1 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${
+                    isActive(link.href) ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                ></span>
               </Link>
             ))}
           </div>
@@ -111,27 +122,29 @@ const Navbar = () => {
             <button className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
               <HiOutlineBell className="w-5 h-5" />
             </button>
-            
+
             {/* Write Button */}
-            <Link
-              href="/admin/addBlog"
-              className="px-5 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-full hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
-            >
-              Write a Blog
-            </Link>
+            {role === "admin" && (
+              <Link
+                href="/admin/addBlog"
+                className="px-5 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-full hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
+              >
+                Write a Blog
+              </Link>
+            )}
 
             {/* User Avatar */}
             <Show when="signed-in">
-               <UserButton />
+              <UserButton />
             </Show>
-             <Show when="signed-out">
-               <Link
-                 href={"/sign-in"}
-                 className="border border-slate-400 cursor-pointer py-1 px-2  rounded-[5px]"
-               >
-                 Sign In
-               </Link>
-             </Show>
+            <Show when="signed-out">
+              <Link
+                href={"/sign-in"}
+                className="border border-slate-400 cursor-pointer py-1 px-2  rounded-[5px]"
+              >
+                Sign In
+              </Link>
+            </Show>
           </div>
 
           {/* Mobile Menu Button */}
@@ -195,13 +208,14 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Write Button */}
-            <Link
-              href="/admin/addBlog"
-              onClick={() => setIsMenuOpen(false)}
-              className="block text-center px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all"
-            >
-              Write a Blog
-            </Link>
+            {role === "admin" && (
+              <Link
+                href="/admin/addBlog"
+                className="px-5 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-full hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
+              >
+                Write a Blog
+              </Link>
+            )}
 
             {/* Mobile User Profile */}
             <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
