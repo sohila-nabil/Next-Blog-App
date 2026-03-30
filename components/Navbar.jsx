@@ -210,30 +210,32 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Write Button */}
-            {role === "admin" && (
-              <Show when="signed-in"> <Link
-                href="/admin/addBlog"
-                className="px-5 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-full hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
-              >
-                Write a Blog
-              </Link>
-              </Show>
-              
-            )}
+            <div className="pt-4 flex items-center gap-2">
+              {role === "admin" && (
+                <Show when="signed-in">
+                  <Link
+                    href="/admin/addBlog"
+                    className="px-5 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-full hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
+                  >
+                    Write a Blog
+                  </Link>
+                </Show>
+              )}
 
-            {/* Mobile User Profile */}
-            <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-              <Show when="signed-in">
-                <UserButton />
-              </Show>
-              <Show when="signed-out">
-                <Link
-                  href={"/sign-in"}
-                  className="border border-slate-400 cursor-pointer py-1 px-2  rounded-[5px]"
-                >
-                  Sign In
-                </Link>
-              </Show>
+              {/* Mobile User Profile */}
+              <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                <Show when="signed-in">
+                  <UserButton />
+                </Show>
+                <Show when="signed-out">
+                  <Link
+                    href={"/sign-in"}
+                    className="border border-slate-400 cursor-pointer py-1 px-2  rounded-[5px]"
+                  >
+                    Sign In
+                  </Link>
+                </Show>
+              </div>
             </div>
           </div>
         </div>
