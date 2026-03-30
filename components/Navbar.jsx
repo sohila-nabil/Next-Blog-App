@@ -13,7 +13,7 @@ import {
 import { assets } from "../Assets/assets";
 import { UserButton, Show, useUser } from "@clerk/nextjs";
 const Navbar = () => {
-  const { user } = useUser();
+  const { user, isSignedIn } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -125,12 +125,14 @@ const Navbar = () => {
 
             {/* Write Button */}
             {role === "admin" && (
-              <Link
-                href="/admin/addBlog"
-                className="px-5 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-full hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
-              >
-                Write a Blog
-              </Link>
+              <Show when="signed-in">
+                <Link
+                  href="/admin/addBlog"
+                  className="px-5 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-full hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
+                >
+                  Write a Blog
+                </Link>
+              </Show>
             )}
 
             {/* User Avatar */}
